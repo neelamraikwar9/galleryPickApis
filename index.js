@@ -7,6 +7,11 @@ const galeryUser = require("./models/User.model");
 const dotenv = require("dotenv");
 const { initializeDB } = require("./db.connect");
 const axios = require("axios");
+// import authRoute from './routes/authRoute';  
+const authRoute = require("./routes/authRoute")
+// import userRoute from './routes/userRoute'; 
+const userRoute = require("./routes/userRoute");
+
 
 app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
@@ -78,6 +83,9 @@ app.get("/private", verifyJWT, (req, res) => {
 initializeDB();
 
 
+app.use('/auth', authRoute); 
+app.use('/user', userRoute); 
+
 
 
 //Apis for google oAuth;
@@ -147,6 +155,9 @@ initializeDB();
 //     res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
 //   }
 // });
+
+
+
 
 
 
