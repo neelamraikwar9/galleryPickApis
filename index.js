@@ -77,75 +77,79 @@ app.get("/private", verifyJWT, (req, res) => {
 
 initializeDB();
 
+
+
+
 //Apis for google oAuth;
 
-app.get("/auth/google", (req, res) => {
-  // const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:${PORT}/auth/google/callback&response_type=code&scope=profile email`;
+// app.get("/auth/google", (req, res) => {
+//   const googleAuthUrl =
+//     `https://accounts.google.com/o/oauth2/v2/auth?` +
+//     `client_id=${process.env.GOOGLE_CLIENT_ID}&` +
+//     `redirect_uri=http://localhost:4000/auth/google/callback&` +
+//     `response_type=code&` +
+//     `scope=https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile&` +
+//     `access_type=offline&prompt=consent`;
+//   res.redirect(googleAuthUrl);
+// });
 
-  // Fixed code
-  const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:${PORT}/auth/google/callback&response_type=code&scope=profile email`;
+// app.get("/auth/google/callback", async (req, res) => {
+//   const { code } = req.query;
+//   // if (!code) {
+//   //   return res.status(400).send("Authorization code not provided.");
+//   // }
+//   if (!code)
+//     return res.redirect(`${process.env.FRONTEND_URL}/login?error=no_code`);
 
-  res.redirect(googleAuthUrl);
-});
+//   try {
+//     // const { data: tokenData } = await axios.post(
+//     const { data } = await axios.post(
+//       "https://oauth2.googleapis.com/token",
 
-app.get("/auth/google/callback", async (req, res) => {
-  const { code } = req.query;
-  if (!code) {
-    return res.status(400).send("Authorization code not provided.");
-  }
+//       new URLSearchParams({
+//         client_id: process.env.GOOGLE_CLIENT_ID,
+//         client_secret: process.env.GOOGLE_CLIENT_SECRET,
+//         code,
+//         grant_type: "authorization_code",
+//         redirect_uri: `http://localhost:${PORT}/auth/google/callback`,
+//       }),
+//       {
+//         headers: { "Content-Type": "application/x-www-form-urlencoded" }, // Required header for Google
+//       },
+//     );
 
-  try {
-    const { data: tokenData } = await axios.post(
-      "https://oauth2.googleapis.com/token",
+//     // Extract Google's access token from the response
+//     const { access_token } = data;
 
-      new URLSearchParams({
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        code,
-        grant_type: "authorization_code",
-        redirect_uri: `http://localhost:${PORT}/auth/google/callback`,
-      }),
-      {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }, // Required header for Google
-      },
-    );
+//     const { data: user } = await axios.get(
+//       "https://www.googleapis.com/oauth2/v2/userinfo",
+//       {
+//         headers: {
+//           Authorization: `Bearer ${access_token}`,
+//         },
+//       },
+//     );
 
-    // Extract Google's access token from the response
-    const { access_token } = tokenData;
+//     const jwt = require("jsonwebtoken");
+//     const token = jwt.sign(
+//       { id: user.id, email: user.email },
+//       process.env.JWT_SECRET,
+//     );
 
-    const { data: user } = await axios.get(
-      "https://www.googleapis.com/oauth2/v2/userinfo",
-      {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      },
-    );
+//     res.cookie(`jwt`, token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "1ax",
+//     });
+//     res.redirect(`${process.env.FRONTEND_URL}/v1/profile/google`);
+//   } catch (error) {
+//     console.error("OAuth error:", error.response?.data);
+//     res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
+//   }
+// });
 
-    const jwt = require("jsonwebtoken");
 
-    // Create your app's JWT containing user's Google ID and email
-    const appJwt = jwt.sign(
-      {
-        userId: user.id, // Google's unique user ID
-        email: user.email, // User's verified Google email
-      },
-      process.env.JWT_SECRET, // Your app's secret key (keep this secure!)
-      { expiresIn: "1h" }, // JWT expires in 1 hour
-    );
 
-    // Set secure httpOnly JWT cookie - frontend can use this for authenticated API calls
-    res.cookie("jwt", appJwt, {
-      httpOnly: true, // Prevents JavaScript access (XSS protection)
-      secure: false, // Set true in production with HTTPS
-    });
-
-    res.redirect(`${process.env.FRONTEND_URL}/v1/profile/google`);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Authentication failed");
-  }
-});
 
 const PORT = 4000;
 app.listen(PORT, () => {
