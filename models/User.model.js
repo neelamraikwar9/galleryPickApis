@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema(
     password: { type: String },
     googleId: { type: String },
     avatar: { type: String },
-
     isVerified: { type: Boolean, default: false },
     isLoggedIn: { type: Boolean, default: false },
     token: { type: String, defautl: null },
@@ -25,4 +24,5 @@ const userSchema = new mongoose.Schema(
 );
 
 const galleryUser = mongoose.model("galleryUser", userSchema);
-module.exports = galleryUser;  
+
+module.exports = galleryUser;

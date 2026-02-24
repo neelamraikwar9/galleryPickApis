@@ -8,7 +8,7 @@ const  isAuthenticated  = require('../middleware/isAuthenticated.js')
 
 const router = express.Router(); 
 
-//google login; 
+//redirect to google login; 
 router.get("/google", passport.authenticate("google", {scope: ["profile", "email"]}))
 
 router.get("/google/callback", 

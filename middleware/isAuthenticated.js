@@ -1,10 +1,6 @@
-// import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 
-const jwt = require("jsonwebtoken"); 
-
-// import { User } from "../models/userModel.js";
-const { User } = require("../models/User.model");
-
+const galleryUser = require("../models/User.model");
 
 const isAuthenticated = async (req, res, next) => {
   try {
@@ -35,7 +31,7 @@ const isAuthenticated = async (req, res, next) => {
       }
       const { id } = decoded;
 
-      const user = await User.findById(id);
+      const user = await galleryUser.findById(id);
       if (!user) {
         return res.status(404).json({
           success: false,
@@ -55,5 +51,4 @@ const isAuthenticated = async (req, res, next) => {
   }
 };
 
-
-module.exports = isAuthenticated; 
+module.exports = isAuthenticated;

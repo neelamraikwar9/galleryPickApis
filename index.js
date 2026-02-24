@@ -5,13 +5,13 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const galeryUser = require("./models/User.model");
 const dotenv = require("dotenv");
-const { initializeDB } = require("./db.connect");
+const { initializeDB } = require("./database/db.connect");
 const axios = require("axios");
-// import authRoute from './routes/authRoute';  
+// import authRoute from './routes/authRoute';
 const authRoute = require("./routes/authRoute")
-// import userRoute from './routes/userRoute'; 
-const userRoute = require("./routes/userRoute");
-
+const passport = require("./config/passport"); 
+// // import userRoute from './routes/userRoute';
+// const userRoute = require("./routes/userRoute");
 
 app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
@@ -82,9 +82,8 @@ app.get("/private", verifyJWT, (req, res) => {
 
 initializeDB();
 
+app.use('/auth', authRoute);
 
-app.use('/auth', authRoute); 
-app.use('/user', userRoute); 
 
 
 
@@ -158,11 +157,39 @@ app.use('/user', userRoute);
 
 
 
-
-
-
-
 const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on the port ${PORT}`);
 });
+
+
+// const express = require("express"); 
+// const dotenv = require("dotenv"); 
+// const { initializeDB } = require("./database/db.connect");
+// const userRoute = require("./routes/userRoute")
+// const authRoute = require("./routes/authRoute");
+// const cors = require("cors");
+// const passport = require("passport"); 
+
+// const app = express();
+// app.cors(); 
+
+// const PORT = process.env.PORT || 3000;
+
+// app.use(express.json());
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     credentials: true,
+//   }),
+// );
+
+// app.use("/auth", authRoute);
+// app.use("/user", userRoute);
+
+// // http://localhost:8000/user/register
+
+// app.listen(PORT, () => {
+//   connectDB();
+//   console.log(`Server is listening at port ${PORT}`);
+// });
