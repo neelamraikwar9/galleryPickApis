@@ -9,7 +9,7 @@ const { initializeDB } = require("./database/db.connect");
 const axios = require("axios");
 // import authRoute from './routes/authRoute';
 const authRoute = require("./routes/authRoute")
-const passport = require("./config/passport"); 
+require("./config/passport"); 
 // // import userRoute from './routes/userRoute';
 // const userRoute = require("./routes/userRoute");
 
@@ -163,33 +163,3 @@ app.listen(PORT, () => {
 });
 
 
-// const express = require("express"); 
-// const dotenv = require("dotenv"); 
-// const { initializeDB } = require("./database/db.connect");
-// const userRoute = require("./routes/userRoute")
-// const authRoute = require("./routes/authRoute");
-// const cors = require("cors");
-// const passport = require("passport"); 
-
-// const app = express();
-// app.cors(); 
-
-// const PORT = process.env.PORT || 3000;
-
-// app.use(express.json());
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173",
-//     credentials: true,
-//   }),
-// );
-
-// app.use("/auth", authRoute);
-// app.use("/user", userRoute);
-
-// // http://localhost:8000/user/register
-
-// app.listen(PORT, () => {
-//   connectDB();
-//   console.log(`Server is listening at port ${PORT}`);
-// });

@@ -15,7 +15,11 @@ router.get("/google/callback",
     passport.authenticate("google", {session: false}), 
     (req, res) => {
         try {
-            const token = jwt.sign({id: req.user._id, email: req.user.email}, process.env.SECRET_KEY, {expiresIn: "24h"})
+            const token = jwt.sign(
+              { id: req.user._id, email: req.user.email },
+              process.env.JWT_SECRET,
+              { expiresIn: "24h" },
+            );
 
             res.redirect(`${process.env.FRONTEND_URL}/auth-success?token=${token}`);
         } catch (error) {
