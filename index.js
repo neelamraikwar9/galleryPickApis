@@ -8,8 +8,8 @@ const dotenv = require("dotenv");
 const { initializeDB } = require("./database/db.connect");
 const axios = require("axios");
 // import authRoute from './routes/authRoute';
-const authRoute = require("./routes/authRoute")
-require("./config/passport"); 
+const authRoute = require("./routes/authRoute");
+require("./config/passport");
 // // import userRoute from './routes/userRoute';
 // const userRoute = require("./routes/userRoute");
 
@@ -23,6 +23,13 @@ const JWT_SECRET = process.env.JWT_SECRET;
 app.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    const existingUser = await galeryUser.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(401)
+        .json({ message: "User already exist. Please Login." });
+    }
 
     const hashed = await bcrypt.hash(password, 10);
     console.log(hashed, "hashed");
@@ -56,23 +63,32 @@ const verifyJWT = (req, res, next) => {
 };
 
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await galeryUser.findOne({ email });
+    const user = await galeryUser.findOne({ email });
 
-  if (!user) {
-    res.status(401).json({ error: "Invalid credentials" });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    // Create JWT
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      JWT_SECRET,
+      {
+        expiresIn: "6h",
+      },
+    );
+    res.json({message: "Login Successful", token, user: {id: user._id, name: user.name, email: user.email} });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Server error during login" });
   }
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    res.status(401).json({ error: "Invalid credentials" });
-  }
-
-  // Create JWT
-  const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, {
-    expiresIn: "6h",
-  });
-  res.json({ token });
 });
 
 // Protected Route Example;
@@ -82,10 +98,7 @@ app.get("/private", verifyJWT, (req, res) => {
 
 initializeDB();
 
-app.use('/auth', authRoute);
-
-
-
+app.use("/auth", authRoute);
 
 //Apis for google oAuth;
 
@@ -155,11 +168,7 @@ app.use('/auth', authRoute);
 //   }
 // });
 
-
-
 const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on the port ${PORT}`);
 });
-
-

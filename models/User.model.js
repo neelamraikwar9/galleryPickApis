@@ -11,8 +11,6 @@ const userSchema = new mongoose.Schema(
     isVerified: { type: Boolean, default: false },
     isLoggedIn: { type: Boolean, default: false },
     token: { type: String, defautl: null },
-    otp: { type: String, default: null },
-    otpExpiry: { type: Date, default: null },
     createdAt: {
       type: Date,
       default: Date.now,
