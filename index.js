@@ -20,15 +20,18 @@ dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-app.post("/signup", async (req, res) => {
+initializeDB();
+
+app.post("/auth/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
     const existingUser = await galeryUser.findOne({ email });
+
     if (existingUser) {
       return res
         .status(401)
-        .json({ message: "User already exist. Please Login." });
+        .json({ message: "User already exist. Please Login.", success: false });
     }
 
     const hashed = await bcrypt.hash(password, 10);
@@ -36,10 +39,11 @@ app.post("/signup", async (req, res) => {
     const user = new galeryUser({ name, email, password: hashed });
     console.log(user, "user");
     await user.save();
-    res.status(201).json({ message: "User created." });
+    res.status(201).json({ message: "User created.", success: true });
   } catch (error) {
     console.log(error, "error");
-    res.status(400).json({ error: "User creation failed" });
+    // res.status(400).json({ error: "User creation failed" });
+    res.status(400).json({ message: "Internal server error", success: false });
   }
 });
 
@@ -54,49 +58,55 @@ const verifyJWT = (req, res, next) => {
 
   try {
     // console.log(token);
-    const decodeToken = jwt.verify(token, JWT_SECRET);
-    req.user = decodeToken;
+    const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decodeToken;                                                                                                           
     next();
   } catch (error) {
     res.status(401).json({ message: "Invalid token." });
   }
 };
 
-app.post("/login", async (req, res) => {
-  try {
+app.post("/auth/login", async (req, res) => {
+  try{
     const { email, password } = req.body;
 
     const user = await galeryUser.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Invalid credentials", success: false });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      res.status(401).json({ error: "Invalid credentials" });
+      res.status(401).json({ error: "Invalid credentials", success: false });
     }
 
     // Create JWT
-    const token = jwt.sign(
-      { userId: user._id, email: user.email },
-      JWT_SECRET,
+    const jwtToken = jwt.sign(
+      { email: user.email, _id: user._id },
+      process.env.JWT_SECRET,
       {
-        expiresIn: "6h",
+        expiresIn: "24h",
       },
     );
-    res.json({message: "Login Successful", token, user: {id: user._id, name: user.name, email: user.email} });
+    res.status(200).json({
+      message: "Login Successful",
+      success: true,
+      jwtToken,
+      email,
+      name: user.name,
+    });
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).json({ message: "Server error during login" });
+    res.status(500).json({ message: "Internal server error", success: false });
   }
 });
 
-// Protected Route Example;
-app.get("/private", verifyJWT, (req, res) => {
-  res.json({ message: "Welcome to the private route!", user: req.user });
-});
+// // Protected Route Example;
+// app.get("/private", verifyJWT, (req, res) => {
+//   res.json({ message: "Welcome to the private route!", user: req.user });
+// });
 
-initializeDB();
+
 
 app.use("/auth", authRoute);
 
