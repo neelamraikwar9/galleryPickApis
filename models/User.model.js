@@ -3,14 +3,10 @@ const mongoose = require("mongoose");
 // User Schema
 const userSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true }, // User's name
+    name: { type: String, required: true }, // User's name
     email: { type: String, required: true, unique: true }, // Email must be unique
     password: { type: String, required: true },
-    googleId: { type: String },
-    avatar: { type: String },
-    isVerified: { type: Boolean, default: false },
-    isLoggedIn: { type: Boolean, default: false },
-    token: { type: String, defautl: null },
+    
     createdAt: {
       type: Date,
       default: Date.now,
