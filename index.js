@@ -18,7 +18,9 @@ app.use(express.json());
 
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET;
+app.use(express.urlencoded({ extended: true })); // Parses form data
+// This middleware tells Express: "Parse incoming request bodies that use form data format."
+
 
 initializeDB();
 
@@ -59,21 +61,26 @@ const verifyJWT = (req, res, next) => {
   try {
     // console.log(token);
     const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decodeToken;                                                                                                           
+    req.user = decodeToken;
     next();
   } catch (error) {
     res.status(401).json({ message: "Invalid token." });
   }
 };
 
+
+
 app.post("/auth/login", async (req, res) => {
-  try{
+  try {
     const { email, password } = req.body;
+    console.log(req.body, "Recived");
 
     const user = await galeryUser.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid credentials", success: false });
+      return res
+        .status(401)
+        .json({ error: "Invalid credentials", success: false });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -106,9 +113,7 @@ app.post("/auth/login", async (req, res) => {
 //   res.json({ message: "Welcome to the private route!", user: req.user });
 // });
 
-
-
-app.use("/auth", authRoute);
+// app.use("/auth", authRoute);
 
 //Apis for google oAuth;
 
