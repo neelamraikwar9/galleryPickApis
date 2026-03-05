@@ -5,13 +5,17 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const galeryUser = require("./models/User.model");
 const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
 const { initializeDB } = require("./database/db.connect");
 const axios = require("axios");
 // import authRoute from './routes/authRoute';
 const authRoute = require("./routes/authRoute");
 require("./config/passport");
+const imgRoute =  require("./routes/imgRoute"); 
 // // import userRoute from './routes/userRoute';
 // const userRoute = require("./routes/userRoute");
+
+app.use(bodyParser.json()); 
 
 app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
@@ -107,6 +111,9 @@ app.post("/auth/login", async (req, res) => {
     res.status(500).json({ message: "Internal server error", success: false });
   }
 });
+
+//importing img api; 
+app.use('/', imgRoute); 
 
 // // Protected Route Example;
 // app.get("/private", verifyJWT, (req, res) => {
