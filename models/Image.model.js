@@ -22,7 +22,7 @@ const ImageSchema = new mongoose.Schema({
   tags: [
     {
       type: String,
-      trim: tue,
+      trim: true,
     },
   ],
 
@@ -44,7 +44,7 @@ const ImageSchema = new mongoose.Schema({
 
       text: String,
       createdAt: {
-        type: Data,
+        type: Date,
         default: Date.now,
       },
     },
