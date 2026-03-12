@@ -24,7 +24,7 @@ const albumSchema = new mongoose.Schema(
 
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "galleryUser",
       required: true,
     },
 
@@ -55,7 +55,7 @@ const albumSchema = new mongoose.Schema(
 );
 
 // Index for faster queries
-albumSchema.index({ ownerId: 1 });
-albumSchema.index({ 'sharedUsers.email': 1 });
+// albumSchema.index({ ownerId: 1 });
+// albumSchema.index({ 'sharedUsers.email': 1 });
 
 module.export = mongoose.model("Album", albumSchema);
