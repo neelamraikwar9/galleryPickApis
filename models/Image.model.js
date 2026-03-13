@@ -6,13 +6,18 @@ const ImageSchema = new mongoose.Schema(
     imageId: {
       type: String,
       required: true,
-      required: true,
       default: () => uuidv4(),
     },
 
     albumId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Album",
+      required: true,
+    },
+
+    userId: {
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "galleryUser", 
       required: true,
     },
 
@@ -58,7 +63,7 @@ const ImageSchema = new mongoose.Schema(
       required: true,
     },
 
-    imgUrl: { type: String, rquired: true },
+    imgUrl: { type: String, required: true },
 
     uploadedAt: {
       type: Date,
@@ -66,7 +71,7 @@ const ImageSchema = new mongoose.Schema(
     },
   },
   {
-    timeStamps: true,
+    timestamps: true,
   },
 );
 
