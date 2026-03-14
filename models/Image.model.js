@@ -15,12 +15,7 @@ const ImageSchema = new mongoose.Schema(
       required: true,
     },
 
-    userId: {
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: "galleryUser", 
-      required: true,
-    },
-
+    
     name: {
       type: String,
       required: true,
@@ -36,6 +31,7 @@ const ImageSchema = new mongoose.Schema(
 
     person: {
       type: String,
+      required: true,
     },
 
     isFavorite: {
@@ -60,7 +56,6 @@ const ImageSchema = new mongoose.Schema(
 
     size: {
       type: Number,
-      required: true,
     },
 
     imgUrl: { type: String, required: true },
