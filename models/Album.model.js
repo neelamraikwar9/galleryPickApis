@@ -32,7 +32,7 @@ const albumSchema = new mongoose.Schema(
       {
         email: {
           type: String,
-          required: true,
+          // required: true,
           lowercase: true,
         },
 
@@ -57,5 +57,5 @@ const albumSchema = new mongoose.Schema(
 // Index for faster queries
 // albumSchema.index({ ownerId: 1 });
 // albumSchema.index({ 'sharedUsers.email': 1 });
-
-module.export = mongoose.model("Album", albumSchema);
+const Album = mongoose.model("Album", albumSchema);
+module.exports = { Album }; 
