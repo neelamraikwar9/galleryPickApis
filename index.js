@@ -12,8 +12,9 @@ const axios = require("axios");
 const authRoute = require("./routes/authRoute");
 require("./config/passport");
 const imgRoute =  require("./routes/imgRoute"); 
-// // import userRoute from './routes/userRoute';
-// const userRoute = require("./routes/userRoute");
+const albumRoute = require("./routes/albumRoute"); 
+
+
 
 app.use(bodyParser.json()); 
 
@@ -114,6 +115,9 @@ app.post("/auth/login", async (req, res) => {
 
 //importing img api; 
 app.use('/', imgRoute); 
+
+//importing album api; 
+app.use('/', albumRoute); 
 
 // // Protected Route Example;
 // app.get("/private", verifyJWT, (req, res) => {

@@ -25,7 +25,7 @@ const albumSchema = new mongoose.Schema(
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "galleryUser",
-      required: true,
+      // required: true,
     },
 
     sharedUsers: [
