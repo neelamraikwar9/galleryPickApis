@@ -70,5 +70,5 @@ const ImageSchema = new mongoose.Schema(
   },
 );
 
-const ImageModel = mongoose.model("Imagess", ImageSchema);
+const ImageModel = mongoose.model("Image", ImageSchema);
 module.exports = { ImageModel };
