@@ -20,4 +20,15 @@ router.post("/albums", async(req, res) => {
     }
 }); 
 
+
+router.get("/albums", async(req, res) => {
+    try {
+        const albums = await Album.find(); 
+        res.status(200).json(albums); 
+    } catch(error){
+        console.error(error); 
+        res.status(500).json({message: "Failed to fetch albums", error: error }); 
+    }
+})
+
 module.exports = router; 
