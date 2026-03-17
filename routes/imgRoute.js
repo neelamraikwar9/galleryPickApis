@@ -31,12 +31,12 @@ router.post("/upload", upload.single("image"), async (req, res) => {
     if (!file) return res.status(400).send("No file uploaded");
 
     //extract field from front;
-    const { albumId, name, tags, person, userId } = req.body;
+    const { albumId, name, tags, person, comments } = req.body;
 
-    if (!albumId || !name || !userId) {
+    if (!albumId || !name) {
       return res
         .status(400)
-        .json({ message: "Missing required fields: albumId, name, or userId" });
+        .json({ message: "Missing required fields: albumId and name" });
     }
 
     const album = await Album.findById(albumId); // imp. album model.
@@ -63,10 +63,10 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       imgUrl: uploadedImgLink.secure_url,
       imageId: undefined,
       albumId,
-      userId,
       name: name.trim(),
       tags: tagsArray,
       person: person?.trim() || null,
+      comments: comments ? [{text: comments.trim()}] : [],
       size: file.size,
     });
 
@@ -78,7 +78,7 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       imageId: newImg._id,
     });
   } catch (error) {
-    console.log("upload error: ", error); 
+    console.log("upload error: ", error);
     res.status(500).json({ message: "Image upload failed", error: error });
   }
 });

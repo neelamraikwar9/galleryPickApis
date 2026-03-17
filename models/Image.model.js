@@ -31,7 +31,8 @@ const ImageSchema = new mongoose.Schema(
 
     person: {
       type: String,
-      required: true,
+      default: null,
+      trim: true
     },
 
     isFavorite: {
