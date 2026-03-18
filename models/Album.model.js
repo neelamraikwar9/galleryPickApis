@@ -42,10 +42,10 @@ const albumSchema = new mongoose.Schema(
           default: "view",
         },
 
-        addedAt: {
-          type: Date,
-          default: Date.now,
-        },
+        // addedAt: {
+        //   type: Date,
+        //   default: Date.now,
+        // },
       },
     ],
   },
