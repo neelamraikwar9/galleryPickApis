@@ -11,8 +11,10 @@ const axios = require("axios");
 // import authRoute from './routes/authRoute';
 const authRoute = require("./routes/authRoute");
 require("./config/passport");
-const imgRoute =  require("./routes/imgRoute"); 
+// const imgRoute =  require("./routes/imgRoute"); 
+const imgRoute = require("./routes/imgRoute")
 const albumRoute = require("./routes/albumRoute"); 
+const userRoute = require("./routes/userRoute")
 
 
 
@@ -113,11 +115,23 @@ app.post("/auth/login", async (req, res) => {
   }
 });
 
+app.get("/users", async(req, res) => {
+    try{
+        const users = await galeryUser.find(); 
+        res.status(200).json(users); 
+    } catch(error){
+        console.error(error); 
+        res.status(500).json({message: "Failed to fetch users", error: error});
+    }
+});
+
 //importing img api; 
 app.use('/', imgRoute); 
 
 //importing album api; 
 app.use('/', albumRoute); 
+
+// app.use('/', userRoute);                                                               
 
 // // Protected Route Example;
 // app.get("/private", verifyJWT, (req, res) => {
