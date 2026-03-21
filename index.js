@@ -14,7 +14,7 @@ require("./config/passport");
 // const imgRoute =  require("./routes/imgRoute"); 
 const imgRoute = require("./routes/imgRoute")
 const albumRoute = require("./routes/albumRoute"); 
-const userRoute = require("./routes/userRoute")
+// const userRoute = require("./routes/userRoute")
 
 
 
