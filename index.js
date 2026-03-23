@@ -125,6 +125,49 @@ app.get("/users", async(req, res) => {
     }
 });
 
+//route to toggle favorite img. 
+app.post("/favorites/toggle", verifyJWT, async(req, res) => {
+  try{
+    const userId = req.user._id; 
+    const { imageId } = req.body; 
+
+    const user = await galeryUser.findById(userId); 
+
+    if(!user) return res.status(404).json({ message: "User not found" });
+
+    // const index = user.favorites.findIndex(
+    //   (favId) => favId.toString() === imageId
+    // ); 
+
+    const favorites = user.favorites.map((id) => id.toString()); 
+    const alreadyFavorite = favorites.includes(imageId); 
+
+    let isFavorite; 
+
+    if(alreadyFavorite){
+      user.favorites = user.favorites.filter((id) => id.toString() !== imageId ); 
+    
+      isFavorite = false; 
+    } else{
+      user.favorites.push(imageId); 
+      isFavorite = true; 
+    }
+
+    await user.save(); 
+    res.status(200).json({message: "Favorite updated", isFavorite}); 
+
+    // if(index === -1){
+    //   user.favorites.push(imageId); 
+    //   isFavorite = true; 
+    // }
+
+
+  } catch(error){
+    console.error(err); 
+    res.status(500).json({ message: "Failed to update favorite" });
+  }
+}); 
+
 //importing img api; 
 app.use('/', imgRoute); 
 
