@@ -11,14 +11,12 @@ const axios = require("axios");
 // import authRoute from './routes/authRoute';
 const authRoute = require("./routes/authRoute");
 require("./config/passport");
-// const imgRoute =  require("./routes/imgRoute"); 
-const imgRoute = require("./routes/imgRoute")
-const albumRoute = require("./routes/albumRoute"); 
+// const imgRoute =  require("./routes/imgRoute");
+const imgRoute = require("./routes/imgRoute");
+const albumRoute = require("./routes/albumRoute");
 // const userRoute = require("./routes/userRoute")
 
-
-
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
 
 app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
@@ -27,7 +25,6 @@ dotenv.config();
 
 app.use(express.urlencoded({ extended: true })); // Parses form data
 // This middleware tells Express: "Parse incoming request bodies that use form data format."
-
 
 initializeDB();
 
@@ -75,8 +72,6 @@ const verifyJWT = (req, res, next) => {
   }
 };
 
-
-
 app.post("/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -115,141 +110,83 @@ app.post("/auth/login", async (req, res) => {
   }
 });
 
-app.get("/users", async(req, res) => {
-    try{
-        const users = await galeryUser.find(); 
-        res.status(200).json(users); 
-    } catch(error){
-        console.error(error); 
-        res.status(500).json({message: "Failed to fetch users", error: error});
-    }
+app.get("/users", async (req, res) => {
+  try {
+    const users = await galeryUser.find();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch users", error: error });
+  }
 });
 
-//route to toggle favorite img. 
-app.post("/favorites/toggle", verifyJWT, async(req, res) => {
-  try{
-    const userId = req.user._id; 
-    const { imageId } = req.body; 
 
-    const user = await galeryUser.findById(userId); 
 
-    if(!user) return res.status(404).json({ message: "User not found" });
+app.post("/favorites/images", verifyJWT, async (req, res) => {
+  try {
+    const { imageId } = req.body;
+    const userId = req.user.id; // Comes from JWT token decoded in authMiddleware
 
-    // const index = user.favorites.findIndex(
-    //   (favId) => favId.toString() === imageId
-    // ); 
-
-    const favorites = user.favorites.map((id) => id.toString()); 
-    const alreadyFavorite = favorites.includes(imageId); 
-
-    let isFavorite; 
-
-    if(alreadyFavorite){
-      user.favorites = user.favorites.filter((id) => id.toString() !== imageId ); 
-    
-      isFavorite = false; 
-    } else{
-      user.favorites.push(imageId); 
-      isFavorite = true; 
+    if (!imageId) {
+      return res.status(400).json({ message: "imageId is required" });
     }
 
-    await user.save(); 
-    res.status(200).json({message: "Favorite updated", isFavorite}); 
+    const user = await galeryUser.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    // if(index === -1){
-    //   user.favorites.push(imageId); 
-    //   isFavorite = true; 
-    // }
+    const index = user.favorites.indexOf(imageId);
+    let isFavorite;
 
+    if (index === -1) {
+      // Add to favorites
+      user.favorites.push(imageId);
+      isFavorite = true;
+    } else {
+      // Remove from favorites
+      user.favorites.splice(index, 1);
+      isFavorite = false;
+    }
 
-  } catch(error){
-    console.error(err); 
-    res.status(500).json({ message: "Failed to update favorite" });
+    await user.save();
+    res.json({ isFavorite, favorites: user.favorites });
+  } catch (error) {
+    console.error("Toggle favorite error:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
   }
-}); 
+});
 
-//importing img api; 
-app.use('/', imgRoute); 
+// Get all favorite images for logged-in user
+app.get("/favorites/images", verifyJWT, async (req, res) => {
+  try {
+    const userId = req.user.id;
 
-//importing album api; 
-app.use('/', albumRoute); 
+    const user = await galeryUser.findById(userId).populate("favorites");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-// app.use('/', userRoute);                                                               
+    res.json(user.favorites || []);
+  } catch (error) {
+    console.error("Get favorites error:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
 
-// // Protected Route Example;
-// app.get("/private", verifyJWT, (req, res) => {
-//   res.json({ message: "Welcome to the private route!", user: req.user });
-// });
+//importing img api;
+app.use("/", imgRoute);
 
-// app.use("/auth", authRoute);
+//importing album api;
+app.use("/", albumRoute);
 
-//Apis for google oAuth;
 
-// app.get("/auth/google", (req, res) => {
-//   const googleAuthUrl =
-//     `https://accounts.google.com/o/oauth2/v2/auth?` +
-//     `client_id=${process.env.GOOGLE_CLIENT_ID}&` +
-//     `redirect_uri=http://localhost:4000/auth/google/callback&` +
-//     `response_type=code&` +
-//     `scope=https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile&` +
-//     `access_type=offline&prompt=consent`;
-//   res.redirect(googleAuthUrl);
-// });
-
-// app.get("/auth/google/callback", async (req, res) => {
-//   const { code } = req.query;
-//   // if (!code) {
-//   //   return res.status(400).send("Authorization code not provided.");
-//   // }
-//   if (!code)
-//     return res.redirect(`${process.env.FRONTEND_URL}/login?error=no_code`);
-
-//   try {
-//     // const { data: tokenData } = await axios.post(
-//     const { data } = await axios.post(
-//       "https://oauth2.googleapis.com/token",
-
-//       new URLSearchParams({
-//         client_id: process.env.GOOGLE_CLIENT_ID,
-//         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-//         code,
-//         grant_type: "authorization_code",
-//         redirect_uri: `http://localhost:${PORT}/auth/google/callback`,
-//       }),
-//       {
-//         headers: { "Content-Type": "application/x-www-form-urlencoded" }, // Required header for Google
-//       },
-//     );
-
-//     // Extract Google's access token from the response
-//     const { access_token } = data;
-
-//     const { data: user } = await axios.get(
-//       "https://www.googleapis.com/oauth2/v2/userinfo",
-//       {
-//         headers: {
-//           Authorization: `Bearer ${access_token}`,
-//         },
-//       },
-//     );
-
-//     const jwt = require("jsonwebtoken");
-//     const token = jwt.sign(
-//       { id: user.id, email: user.email },
-//       process.env.JWT_SECRET,
-//     );
-
-//     res.cookie(`jwt`, token, {
-//       httpOnly: true,
-//       secure: false,
-//       sameSite: "1ax",
-//     });
-//     res.redirect(`${process.env.FRONTEND_URL}/v1/profile/google`);
-//   } catch (error) {
-//     console.error("OAuth error:", error.response?.data);
-//     res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
-//   }
-// });
 
 const PORT = 4000;
 app.listen(PORT, () => {
