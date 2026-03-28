@@ -29,6 +29,12 @@ const ImageSchema = new mongoose.Schema(
       },
     ],
 
+    ownerId: {
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "galleryUser",
+      required: true
+    },
+
     person: {
       type: String,
       default: null,

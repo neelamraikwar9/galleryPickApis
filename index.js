@@ -57,6 +57,7 @@ app.post("/auth/signup", async (req, res) => {
 
 const verifyJWT = (req, res, next) => {
   const token = req.headers["authorization"];
+  console.log(token, "token"); 
 
   if (!token) {
     return res.status(401).json({ message: "No token provided." });
@@ -65,9 +66,11 @@ const verifyJWT = (req, res, next) => {
   try {
     // console.log(token);
     const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decodeToken, "decodeToken")
     req.user = decodeToken;
     next();
   } catch (error) {
+    console.log(error, "error"); 
     res.status(401).json({ message: "Invalid token." });
   }
 };
@@ -161,24 +164,27 @@ app.post("/favorites/images", verifyJWT, async (req, res) => {
 });
 
 // Get all favorite images for logged-in user
-app.get("/favorites/images", verifyJWT, async (req, res) => {
-  try {
-    const userId = req.user.id;
+// app.get("/favorites/images", verifyJWT, async (req, res) => {
+//   try {
+//     const userId = req.user_id;
+//     console.log(userId, "userId"); 
 
-    const user = await galeryUser.findById(userId).populate("favorites");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+//     const user = await galeryUser.findById(userId).populate("favorites");
+//     console.log(user, "user"); 
 
-    res.json(user.favorites || []);
-  } catch (error) {
-    console.error("Get favorites error:", error);
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-    });
-  }
-});
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     res.json(user.favorites || []);
+//   } catch (error) {
+//     console.error("Get favorites error:", error);
+//     res.status(500).json({
+//       message: "Server error",
+//       error: error.message,
+//     });
+//   }
+// });
 
 //importing img api;
 app.use("/", imgRoute);
