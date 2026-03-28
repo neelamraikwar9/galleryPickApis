@@ -7,6 +7,7 @@ const dotenv = require("dotenv");
 const { ImageModel } = require("../models/Image.model");
 const { Album } = require("../models/Album.model");
 const router = express.Router();
+const verifyJWT = require("./middleware"); 
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ const upload = multer({ storage });
 
 //api to upload Img;
 
-router.post("/upload", upload.single("image"), async (req, res) => {
+router.post("/upload", verifyJWT, upload.single("image"), async (req, res) => {
   try {
     const file = req.file;
     if (!file) return res.status(400).send("No file uploaded");
@@ -84,7 +85,7 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 });
 
 //api to get images;
-router.get("/images", async (req, res) => {
+router.get("/images", verifyJWT, async (req, res) => {
   try {
     const images = await ImageModel.find();
     res.status(200).json(images);
