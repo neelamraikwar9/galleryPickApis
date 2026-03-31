@@ -3,6 +3,8 @@ const { v4: uuidv4 } = require("uuid");
 
 const ImageSchema = new mongoose.Schema(
   {
+    imgUrl: { type: String, required: true },
+    
     imageId: {
       type: String,
       required: true,
@@ -15,7 +17,6 @@ const ImageSchema = new mongoose.Schema(
       required: true,
     },
 
-    
     name: {
       type: String,
       required: true,
@@ -30,15 +31,15 @@ const ImageSchema = new mongoose.Schema(
     ],
 
     ownerId: {
-      type: mongoose.Schema.Types.ObjectId, 
+      type: mongoose.Schema.Types.ObjectId,
       ref: "galleryUser",
-      required: true
+      required: true,
     },
 
     person: {
       type: String,
       default: null,
-      trim: true
+      trim: true,
     },
 
     isFavorite: {
@@ -64,8 +65,6 @@ const ImageSchema = new mongoose.Schema(
     size: {
       type: Number,
     },
-
-    imgUrl: { type: String, required: true },
 
     uploadedAt: {
       type: Date,
