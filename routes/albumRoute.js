@@ -2,9 +2,14 @@ const express = require("express");
 const router = express.Router(); 
 const { Album } = require("../models/Album.model"); 
 // const dotenv = require("dotenv"); 
+const verifyJWT = require("./middleware"); 
 
-router.post("/albums", async(req, res) => {
+
+router.post("/albums", verifyJWT, async (req, res) => {
     try{
+        //add user automatically; 
+        req.body.userId = req.user._id; 
+        
         // cret. new instance.
          const album = new Album(req.body); 
 
@@ -21,9 +26,10 @@ router.post("/albums", async(req, res) => {
 }); 
 
 
-router.get("/albums", async(req, res) => {
+router.get("/albums", verifyJWT,  async(req, res) => {
     try {
-        const albums = await Album.find(); 
+        const albums = await Album.find( {userId: req.user_id});
+        console.log(albums, "albums");  
         res.status(200).json(albums); 
     } catch(error){
         console.error(error); 
