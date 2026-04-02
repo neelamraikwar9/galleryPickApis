@@ -8,7 +8,7 @@ const verifyJWT = require("./middleware");
 router.post("/albums", verifyJWT, async (req, res) => {
     try{
         //add user automatically; 
-        req.body.userId = req.user._id; 
+        req.body.ownerId = req.user._id; 
         
         // cret. new instance.
          const album = new Album(req.body); 
@@ -28,7 +28,7 @@ router.post("/albums", verifyJWT, async (req, res) => {
 
 router.get("/albums", verifyJWT,  async(req, res) => {
     try {
-        const albums = await Album.find( {userId: req.user_id});
+        const albums = await Album.find({ ownerId: req.user._id });
         console.log(albums, "albums");  
         res.status(200).json(albums); 
     } catch(error){
