@@ -54,27 +54,6 @@ app.post("/auth/signup", async (req, res) => {
   }
 });
 
-//middle ware for json web token;
-
-// const verifyJWTMiddleware = (req, res, next) => {
-//   const token = req.headers["authorization"];
-//   console.log(token, "token"); 
-
-//   if (!token) {
-//     return res.status(401).json({ message: "No token provided." });
-//   }
-
-//   try {
-//     // console.log(token);
-//     const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
-//     console.log(decodeToken, "decodeToken")
-//     req.user = decodeToken;
-//     next();
-//   } catch (error) {
-//     console.log(error, "error"); 
-//     res.status(401).json({ message: "Invalid token." });
-//   }
-// };
 
 app.post("/auth/login", async (req, res) => {
   try {
@@ -126,43 +105,6 @@ app.get("/users", async (req, res) => {
 
 
 
-app.post("/favorites/images", verifyJWT, async (req, res) => {
-  try {
-    const { imageId } = req.body;
-    const userId = req.user.id; // Comes from JWT token decoded in authMiddleware
-
-    if (!imageId) {
-      return res.status(400).json({ message: "imageId is required" });
-    }
-
-    const user = await galeryUser.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const index = user.favorites.indexOf(imageId);
-    let isFavorite;
-
-    if (index === -1) {
-      // Add to favorites
-      user.favorites.push(imageId);
-      isFavorite = true;
-    } else {
-      // Remove from favorites
-      user.favorites.splice(index, 1);
-      isFavorite = false;
-    }
-
-    await user.save();
-    res.json({ isFavorite, favorites: user.favorites });
-  } catch (error) {
-    console.error("Toggle favorite error:", error);
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-    });
-  }
-});
 
 // Get all favorite images for logged-in user
 // app.get("/favorites/images", verifyJWT, async (req, res) => {
