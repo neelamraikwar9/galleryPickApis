@@ -8,7 +8,6 @@ const { ImageModel } = require("../models/Image.model");
 const { Album } = require("../models/Album.model");
 const router = express.Router();
 const verifyJWT = require("./middleware"); 
-const galleryUser = require("../models/User.model");
 
 
 dotenv.config();
