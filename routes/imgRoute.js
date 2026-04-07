@@ -153,5 +153,29 @@ router.post("/images/favorite", verifyJWT, async (req, res) => {
   }
 });
 
+router.get("/images/favorites", verifyJWT, async(req, res) => {
+
+  try{
+    const userId = req.user._id; 
+    console.log(userId, "userId")
+    const user = await galleryUser.findById(userId).select('favorite'); 
+    console.log(user, "user"); 
+    if(!user || !user.favorites.length){
+      return res.json({favorites: []}); 
+    }
+
+    const favImages = await ImageModel.find({
+      _id: {$in: user.favorites}
+    }).populate('userId, albumId'); 
+  
+    console.log(favImages, "favImages");
+    
+    res.json({favorites: favoriteImages, count: favoriteImages.length}); 
+  } catch(error){
+    console.error("Get favorites error: ", error); 
+    res.status(500).json({ message: "Server error" });
+  }
+}); 
+
 
 module.exports = router;
