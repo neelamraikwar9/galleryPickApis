@@ -8,6 +8,8 @@ const { ImageModel } = require("../models/Image.model");
 const { Album } = require("../models/Album.model");
 const router = express.Router();
 const verifyJWT = require("./middleware"); 
+const galleryUser = require("../models/User.model");
+
 
 dotenv.config();
 
@@ -106,5 +108,51 @@ router.get("/images", verifyJWT, async (req, res) => {
     res.status(500).json({ message: "Failed to fetch images", error: error });
   }
 });
+
+// api to post favorite images; 
+
+router.post("/images/favorite", verifyJWT, async (req, res) => {
+  try {
+    const { imageId  } = req.body;
+    const userId = req.user._id; // Comes from JWT token dec oded in authMiddleware
+    console.log(userId, "userId"); 
+
+    if (!imageId) {
+      return res.status(400).json({ message: "imageId is required" });
+    }
+
+    const user = await galleryUser.findById(userId);
+    console.log(user, "user"); 
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const index = user.favorites.indexOf(imageId);
+    let isFavorite = user.favorites.includes(imageId);
+
+    if (isFavorite) {
+      // Add to favorites
+      user.favorites.pull(imageId); //.pull() = Remove specific item from array. Perfect for unfavoriting images!
+      isFavorite = false;
+    } else {
+      // Remove from favorites
+      user.favorites.push(imageId);
+      isFavorite = true;
+    }
+
+    await user.save();
+    res.json({ isFavorite: !isFavorite, 
+      favorites: user.favorites
+     });
+  } catch (error) {
+    console.error("Toggle favorite error:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
+
 
 module.exports = router;
