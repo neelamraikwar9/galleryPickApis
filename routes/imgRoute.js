@@ -127,22 +127,23 @@ router.post("/images/favorite", verifyJWT, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const index = user.favorites.indexOf(imageId);
-    let isFavorite = user.favorites.includes(imageId);
+    // const index = user.favorites.indexOf(imageId);
+    let isCurrentlyFavorite = user.favorites.includes(imageId);
+    let newFav; 
 
-    if (isFavorite) {
+    if (isCurrentlyFavorite) {
       // Add to favorites
       user.favorites.pull(imageId); //.pull() = Remove specific item from array. Perfect for unfavoriting images!
-      isFavorite = false;
+      newFav = false;
     } else {
       // Remove from favorites
       user.favorites.push(imageId);
-      isFavorite = true;
+      newFav = true;
     }
 
     await user.save();
     res.json({ isFavorite: !isFavorite, 
-      favorites: user.favorites
+      favorites: user.favorites,
      });
   } catch (error) {
     console.error("Toggle favorite error:", error);
