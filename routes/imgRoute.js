@@ -8,7 +8,7 @@ const { ImageModel } = require("../models/Image.model");
 const { Album } = require("../models/Album.model");
 const router = express.Router();
 const verifyJWT = require("./middleware"); 
-
+const galleryUser = require("../models/User.model"); 
 
 dotenv.config();
 
@@ -158,19 +158,19 @@ router.get("/images/favorites", verifyJWT, async(req, res) => {
   try{
     const userId = req.user._id; 
     console.log(userId, "userId")
-    const user = await galleryUser.findById(userId).select('favorite'); 
-    console.log(user, "user"); 
-    if(!user || !user.favorites.length){
-      return res.json({favorites: []}); 
+    const user = await galleryUser.findById(userId).select("favorites"); 
+    console.log(user, "usern n n n n n n n n n n "); 
+    if(!user){
+      return res.status(404).json({message: "User not found."}); 
     }
 
     const favImages = await ImageModel.find({
-      _id: {$in: user.favorites}
-    }).populate('userId, albumId'); 
+      _id: { $in: user.favorites },
+    }).populate("ownerId albumId"); 
   
     console.log(favImages, "favImages");
     
-    res.json({favorites: favoriteImages, count: favoriteImages.length}); 
+    res.json({ favorites: favImages, count: favImages.length }); 
   } catch(error){
     console.error("Get favorites error: ", error); 
     res.status(500).json({ message: "Server error" });
