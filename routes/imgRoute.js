@@ -139,13 +139,9 @@ router.post("/images/favorite", verifyJWT, async (req, res) => {
       newFav = false;
 
     } else {
-      // Remove from favorites
-      // user.favorites.pop(imageId);
-      // newFav = false;
-
       user.favorites.push(imageId);
       newFav = true;
-    }
+    } 
 
     await user.save();
     res.json({
