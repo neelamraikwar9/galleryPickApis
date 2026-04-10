@@ -7,8 +7,8 @@ const dotenv = require("dotenv");
 const { ImageModel } = require("../models/Image.model");
 const { Album } = require("../models/Album.model");
 const router = express.Router();
-const verifyJWT = require("./middleware"); 
-const galleryUser = require("../models/User.model"); 
+const verifyJWT = require("./middleware");
+const galleryUser = require("../models/User.model");
 
 dotenv.config();
 
@@ -97,9 +97,11 @@ router.post("/upload", verifyJWT, upload.single("image"), async (req, res) => {
 //api to get images;
 router.get("/images", verifyJWT, async (req, res) => {
   try {
-    const images = await ImageModel.find({ ownerId: req.user._id }).populate('albumId', 'name').sort({ createdAt: -1});
-    console.log(images, "images"); 
-    
+    const images = await ImageModel.find({ ownerId: req.user._id })
+      .populate("albumId", "name")
+      .sort({ createdAt: -1 });
+    console.log(images, "images");
+
     console.log(`📸 ${images.length} images for ${req.user.email}`);
     res.status(200).json(images);
   } catch (error) {
@@ -108,20 +110,20 @@ router.get("/images", verifyJWT, async (req, res) => {
   }
 });
 
-// api to post favorite images; 
+// api to post favorite images;
 
 router.post("/images/favorite", verifyJWT, async (req, res) => {
   try {
-    const { imageId  } = req.body;
+    const { imageId } = req.body;
     const userId = req.user._id; // Comes from JWT token dec oded in authMiddleware
-    console.log(userId, "userId"); 
+    console.log(userId, "userId");
 
     if (!imageId) {
       return res.status(400).json({ message: "imageId is required" });
     }
 
     const user = await galleryUser.findById(userId);
-    console.log(user, "user"); 
+    console.log(user, "user");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -129,22 +131,27 @@ router.post("/images/favorite", verifyJWT, async (req, res) => {
 
     // const index = user.favorites.indexOf(imageId);
     let isCurrentlyFavorite = user.favorites.includes(imageId);
-    let newFav; 
+    let newFav;
 
     if (isCurrentlyFavorite) {
       // Add to favorites
-      user.favorites.pull(imageId); //.pull() = Remove specific item from array. Perfect for unfavoriting images!
+      user.favorites = user.favorites.filter((id) => id !== imageId);
       newFav = false;
+
     } else {
       // Remove from favorites
+      // user.favorites.pop(imageId);
+      // newFav = false;
+
       user.favorites.push(imageId);
       newFav = true;
     }
 
     await user.save();
-    res.json({ isFavorite: !isFavorite, 
+    res.json({
+      isFavorite: newFav, 
       favorites: user.favorites,
-     });
+    });
   } catch (error) {
     console.error("Toggle favorite error:", error);
     res.status(500).json({
@@ -154,29 +161,27 @@ router.post("/images/favorite", verifyJWT, async (req, res) => {
   }
 });
 
-router.get("/images/favorites", verifyJWT, async(req, res) => {
-
-  try{
-    const userId = req.user._id; 
-    console.log(userId, "userId")
-    const user = await galleryUser.findById(userId).select("favorites"); 
-    console.log(user, "usern n n n n n n n n n n "); 
-    if(!user){
-      return res.status(404).json({message: "User not found."}); 
+router.get("/images/favorites", verifyJWT, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    console.log(userId, "userId");
+    const user = await galleryUser.findById(userId).select("favorites");
+    console.log(user, "usern n n n n n n n n n n ");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
     }
 
     const favImages = await ImageModel.find({
       _id: { $in: user.favorites },
-    }).populate("ownerId albumId"); 
-  
+    }).populate("ownerId albumId");
+
     console.log(favImages, "favImages");
-    
-    res.json({ favorites: favImages, count: favImages.length }); 
-  } catch(error){
-    console.error("Get favorites error: ", error); 
+
+    res.json({ favorites: favImages, count: favImages.length });
+  } catch (error) {
+    console.error("Get favorites error: ", error);
     res.status(500).json({ message: "Server error" });
   }
-}); 
-
+});
 
 module.exports = router;
