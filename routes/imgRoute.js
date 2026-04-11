@@ -130,12 +130,12 @@ router.post("/images/favorite", verifyJWT, async (req, res) => {
     }
 
     // const index = user.favorites.indexOf(imageId);
-    let isCurrentlyFavorite = user.favorites.includes(imageId);
+    let isCurrentlyFavorite = user.favorites.some((id) => id.toString() === imageId);
     let newFav;
 
     if (isCurrentlyFavorite) {
       // Add to favorites
-      user.favorites = user.favorites.filter((id) => id !== imageId);
+      user.favorites = user.favorites.filter((id) => id.toString() !== imageId);
       newFav = false;
 
     } else {
@@ -162,7 +162,7 @@ router.get("/images/favorites", verifyJWT, async (req, res) => {
     const userId = req.user._id;
     console.log(userId, "userId");
     const user = await galleryUser.findById(userId).select("favorites");
-    console.log(user, "usern n n n n n n n n n n ");
+    console.log(user, "usern");
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
