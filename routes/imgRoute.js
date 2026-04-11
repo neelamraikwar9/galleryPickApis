@@ -41,12 +41,7 @@ router.post("/upload", verifyJWT, upload.single("image"), async (req, res) => {
         .json({ message: "Missing required fields: albumId and name" });
     }
 
-    // const album = await Album.findById(albumId); // imp. album model.
-    // if (!album) {
-    //   return res.status(400).json({ message: "Invalid albumId" });
-    // }
-
-    // ✅ NEW: Check album belongs to current user
+    //Checking album belongs to current user
     const album = await Album.findOne({ _id: albumId, ownerId: req.user._id });
     if (!album) {
       return res
@@ -115,7 +110,7 @@ router.get("/images", verifyJWT, async (req, res) => {
 router.post("/images/favorite", verifyJWT, async (req, res) => {
   try {
     const { imageId } = req.body;
-    const userId = req.user._id; // Comes from JWT token dec oded in authMiddleware
+    const userId = req.user._id; // Comes from JWT token decoded in authMiddleware
     console.log(userId, "userId");
 
     if (!imageId) {
@@ -129,23 +124,23 @@ router.post("/images/favorite", verifyJWT, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // const index = user.favorites.indexOf(imageId);
-    let isCurrentlyFavorite = user.favorites.some((id) => id.toString() === imageId);
+    let isCurrentlyFavorite = user.favorites.some(
+      (id) => id.toString() === imageId,
+    );
     let newFav;
 
     if (isCurrentlyFavorite) {
       // Add to favorites
       user.favorites = user.favorites.filter((id) => id.toString() !== imageId);
       newFav = false;
-
     } else {
       user.favorites.push(imageId);
       newFav = true;
-    } 
+    }
 
     await user.save();
     res.json({
-      isFavorite: newFav, 
+      isFavorite: newFav,
       favorites: user.favorites,
     });
   } catch (error) {
