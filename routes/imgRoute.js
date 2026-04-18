@@ -179,7 +179,23 @@ router.get("/images/favorites", verifyJWT, async (req, res) => {
 
 //api to delete image
 
-router.delete(())
+router.delete("/images/:imageId", verifyJWT, async(req, res) => {
+  try{
+    const { imageId } = req.params; 
+    const delImg = await ImageModel.findByIdAndDelete(imageId); 
+    console.log(delImg, "delImg"); 
+
+    if(!delImg){
+      res.status(400).json({message: "Album not found"}); 
+    }
+    console.log(delImg, "Image Deleted"); 
+    res.status(200).json({message: "Image deleted successfully.", deltedImg: delImg}); 
+
+  } catch(error){
+    console.log(error); 
+    res.status(500).json({message: "Fail to delete Images."}); 
+  }
+}); 
 
 
 
