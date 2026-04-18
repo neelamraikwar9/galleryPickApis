@@ -37,4 +37,25 @@ router.get("/albums", verifyJWT,  async(req, res) => {
     }
 })
 
+//api to delete album; 
+
+router.delete("/albums/:albumId", verifyJWT, async(req, res) => {
+    try {
+      const { albumId } = req.params;
+      const delAlbm = await Album.findByIdAndDelete(albumId);
+      console.log(delAlbm, "delAlbm");
+      if (!delAlbm) {
+        res.status(400).json({ message: "Album not found" });
+      }
+      console.log(delAlbm, "Deleted album");
+      res.status(200).json({
+        message: "Album deleted successfully",
+        deletedAlbum: delAlbm,
+      }); // ✅ Send success response
+    } catch(error){
+        console.log(error); 
+        res.status(500).json({message: "Fail to delete album."}); 
+    }
+});
+
 module.exports = router; 

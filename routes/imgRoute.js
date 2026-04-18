@@ -175,4 +175,12 @@ router.get("/images/favorites", verifyJWT, async (req, res) => {
   }
 });
 
+
+
+//api to delete image
+
+router.delete(())
+
+
+
 module.exports = router;
