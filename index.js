@@ -9,13 +9,15 @@ const bodyParser = require("body-parser");
 const { initializeDB } = require("./database/db.connect");
 const axios = require("axios");
 // import authRoute from './routes/authRoute';
-const authRoute = require("./routes/authRoute");
+const googleAuthRoute = require("./routes/googleAuthRoute");
 require("./config/passport");
 // const imgRoute =  require("./routes/imgRoute");
 const imgRoute = require("./routes/imgRoute");
 const albumRoute = require("./routes/albumRoute");
 const verifyJWT = require("./routes/middleware"); 
 // const userRoute = require("./routes/userRoute")
+const passport = require("./config/passport"); 
+app.use(passport.initialize());
 
 app.use(bodyParser.json());
 
@@ -107,27 +109,7 @@ app.get("/users", async (req, res) => {
 
 
 // Get all favorite images for logged-in user
-// app.get("/favorites/images", verifyJWT, async (req, res) => {
-//   try {
-//     const userId = req.user_id;
-//     console.log(userId, "userId"); 
 
-//     const user = await galeryUser.findById(userId).populate("favorites");
-//     console.log(user, "user"); 
-
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     res.json(user.favorites || []);
-//   } catch (error) {
-//     console.error("Get favorites error:", error);
-//     res.status(500).json({
-//       message: "Server error",
-//       error: error.message,
-//     });
-//   }
-// });
 
 //importing img api;
 app.use("/", imgRoute);
@@ -135,6 +117,7 @@ app.use("/", imgRoute);
 //importing album api;
 app.use("/", albumRoute);
 
+app.use("/", googleAuthRoute); 
 
 
 const PORT = 4000;
