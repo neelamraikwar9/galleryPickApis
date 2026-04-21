@@ -15,11 +15,11 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         // Check if user already exists
-        let user = await User.findOne({ googleId: profile.id });
+        let user = await galleryUser.findOne({ googleId: profile.id });
 
         if (!user) {
           // Also check by email (user may have signed up manually before)
-          user = await User.findOne({ email: profile.emails[0].value });
+          user = await galleryUser.findOne({ email: profile.emails[0].value });
 
           if (user) {
             // Link Google ID to existing account
@@ -27,7 +27,7 @@ passport.use(
             await user.save();
           } else {
             // Create brand new user
-            user = await User.create({
+            user = await galleryUser.create({
               name: profile.displayName,
               email: profile.emails[0].value,
               googleId: profile.id,

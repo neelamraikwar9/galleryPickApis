@@ -117,7 +117,7 @@ app.use("/", imgRoute);
 //importing album api;
 app.use("/", albumRoute);
 
-app.use("/", googleAuthRoute); 
+app.use("/auth", googleAuthRoute); 
 
 
 const PORT = 4000;
