@@ -1,9 +1,7 @@
 const express = require("express");
-
 const multer = require("multer");
 const cloudinary = require("cloudinary");
 const dotenv = require("dotenv");
-// const bodyParser = require("body-parser");
 const { ImageModel } = require("../models/Image.model");
 const { Album } = require("../models/Album.model");
 const router = express.Router();
@@ -168,35 +166,32 @@ router.get("/images/favorites", verifyJWT, async (req, res) => {
 
     console.log(favImages, "favImages");
 
-    res.json({ favorites: favImages, count: favImages.length });
+    res.json({ favorites: favImages || [], count: favImages.length || 0});
   } catch (error) {
     console.error("Get favorites error: ", error);
     res.status(500).json({ message: "Server error" });
   }
 });
 
+//api to delete image 
 
+router.delete("/images/:imageId", verifyJWT, async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const delImg = await ImageModel.findByIdAndDelete(imageId);
+    console.log(delImg, "delImg");
 
-//api to delete image
-
-router.delete("/images/:imageId", verifyJWT, async(req, res) => {
-  try{
-    const { imageId } = req.params; 
-    const delImg = await ImageModel.findByIdAndDelete(imageId); 
-    console.log(delImg, "delImg"); 
-
-    if(!delImg){
-      res.status(400).json({message: "Album not found"}); 
+    if (!delImg) {
+      res.status(400).json({ message: "Album not found" });
     }
-    console.log(delImg, "Image Deleted"); 
-    res.status(200).json({message: "Image deleted successfully.", deltedImg: delImg}); 
-
-  } catch(error){
-    console.log(error); 
-    res.status(500).json({message: "Fail to delete Images."}); 
+    console.log(delImg, "Image Deleted");
+    res
+      .status(200)
+      .json({ message: "Image deleted successfully.", deltedImg: delImg });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Fail to delete Images." });
   }
-}); 
-
-
+});
 
 module.exports = router;
