@@ -54,6 +54,8 @@ initializeDB();
 
 
 
+
+
 app.post("/auth/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
