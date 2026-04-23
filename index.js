@@ -137,6 +137,8 @@ app.get("/users", async (req, res) => {
 
 
 //importing img api;
+app.use("/", imgRoute);     //lkjklkl;;;;;
+
 app.use("/images/favorites", imgRoute);     //lkjklkl;;;;;
 
 //importing album api;
