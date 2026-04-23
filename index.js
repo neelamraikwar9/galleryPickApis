@@ -8,14 +8,11 @@ const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const { initializeDB } = require("./database/db.connect");
 const axios = require("axios");
-// import authRoute from './routes/authRoute';
 const googleAuthRoute = require("./routes/googleAuthRoute");
 require("./config/passport");
-// const imgRoute =  require("./routes/imgRoute");
 const imgRoute = require("./routes/imgRoute");
 const albumRoute = require("./routes/albumRoute");
 const verifyJWT = require("./routes/middleware"); 
-// const userRoute = require("./routes/userRoute")
 const passport = require("./config/passport"); 
 app.use(passport.initialize());
 
@@ -30,6 +27,23 @@ app.use(express.urlencoded({ extended: true })); // Parses form data
 // This middleware tells Express: "Parse incoming request bodies that use form data format."
 
 initializeDB();
+
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+
+// Put this BEFORE your route registrations
+app.use("/", imgRoute);
+
+
+
+
+
+
+
+
 
 app.post("/auth/signup", async (req, res) => {
   try {
@@ -121,6 +135,6 @@ app.use("/auth", googleAuthRoute);
 
 
 const PORT = 4000;
-app.listen(PORT, () => {
+app.listen(PORT, () => {  
   console.log(`Server is running on the port ${PORT}`);
 });
