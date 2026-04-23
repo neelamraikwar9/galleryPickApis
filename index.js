@@ -29,13 +29,22 @@ app.use(express.urlencoded({ extended: true })); // Parses form data
 initializeDB();
 
 
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path}`);
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log(`${req.method} ${req.path}`, "debuggingg");
+//   next();
+// });
 
-// Put this BEFORE your route registrations
-app.use("/", imgRoute);
+// // Put this BEFORE your route registrations
+// app.use("/", imgRoute);
+
+
+// app.use((req, res, next) => {
+//   console.log(`➡️ ${req.method} ${req.path}`, "debugg");
+//   next();
+// });
+
+// // THEN your routes
+// app.use("/", imgRoute);
 
 
 
@@ -90,7 +99,7 @@ app.post("/auth/login", async (req, res) => {
 
     // Create JWT
     const jwtToken = jwt.sign(
-      { email: user.email, _id: user._id },
+      { email: user.email, _id: user._id.toString() },
       process.env.JWT_SECRET,
       {
         expiresIn: "24h",
@@ -126,7 +135,7 @@ app.get("/users", async (req, res) => {
 
 
 //importing img api;
-app.use("/", imgRoute);
+app.use("/images/favorites", imgRoute);     //lkjklkl;;;;;
 
 //importing album api;
 app.use("/", albumRoute);
