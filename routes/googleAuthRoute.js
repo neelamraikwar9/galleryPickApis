@@ -1,7 +1,9 @@
 const express = require("express");
 const passport = require("../config/passport");
 const jwt = require("jsonwebtoken");
-const isAuthenticated = require("../middleware/isAuthenticated.js");
+// const isAuthenticated = require("../middleware/isAuthenticated.js");
+const isAuthenticated = require("./middleware");
+
 
 const router = express.Router();
 

@@ -12,7 +12,9 @@ const googleAuthRoute = require("./routes/googleAuthRoute");
 require("./config/passport");
 const imgRoute = require("./routes/imgRoute");
 const albumRoute = require("./routes/albumRoute");
-const verifyJWT = require("./routes/middleware"); 
+const verifyJWT = require("./routes/middleware");
+// const verifyJWT = require("./middleware/isAuthenticated") 
+
 const passport = require("./config/passport"); 
 app.use(passport.initialize());
 
