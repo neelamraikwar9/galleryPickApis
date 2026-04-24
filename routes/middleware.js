@@ -21,7 +21,9 @@ const verifyJWTMiddleware = async (req, res, next) => {
     const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
     console.log("Decoded:", decodeToken.email);
 
-    const user = await galleryUser.findById(docodeToken._id).select("-password"); 
+    const user = await galleryUser
+      .findById(decodeToken._id)
+      .select("-password"); 
     req.user = user; 
     next(); 
     // req.user = decodeToken;

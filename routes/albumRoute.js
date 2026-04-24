@@ -1,9 +1,9 @@
 const express = require("express"); 
 const router = express.Router(); 
 const { Album } = require("../models/Album.model"); 
-// const dotenv = require("dotenv"); 
+
 const verifyJWT = require("./middleware"); 
-// const verifyJWT = require("./middleware/isAuthenticated"); 
+
 
 
 router.post("/albums", verifyJWT, async (req, res) => {
