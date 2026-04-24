@@ -8,7 +8,7 @@ const verifyJWTMiddleware = async (req, res, next) => {
   console.log("🔍 Full auth header:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    console.log("❌ No valid Bearer token");
+    console.log("No valid Bearer token");
     return res
       .status(401)
       .json({ message: "No token provided or invalid format." });
@@ -16,10 +16,10 @@ const verifyJWTMiddleware = async (req, res, next) => {
 
   try {
     const token = authHeader.split(" ")[1];
-    console.log("✅ Clean token length:", token?.length);
+    console.log("Clean token length:", token?.length);
 
     const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("✅ Decoded:", decodeToken.email);
+    console.log("Decoded:", decodeToken.email);
 
     const user = await galleryUser.findById(docodeToken._id).select("-password"); 
     req.user = user; 
@@ -27,7 +27,7 @@ const verifyJWTMiddleware = async (req, res, next) => {
     // req.user = decodeToken;
     // next();
   } catch (error) {
-    console.log("❌ JWT Error:", error.name, error.message);
+    console.log("JWT Error:", error.name, error.message);
     res.status(401).json({ message: "Invalid token." });
   }
 };
