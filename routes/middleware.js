@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
-const galleryUser = require("../models/User.model"); 
+const galleryUser = require("../models/User.model");
 
 const verifyJWTMiddleware = async (req, res, next) => {
-  const headers = req.headers; 
+  const headers = req.headers;
   const authHeader = headers?.authorization || headers?.Authorization;
 
   console.log("🔍 Full auth header:", authHeader);
@@ -23,11 +23,9 @@ const verifyJWTMiddleware = async (req, res, next) => {
 
     const user = await galleryUser
       .findById(decodeToken._id)
-      .select("-password"); 
-    req.user = user; 
-    next(); 
-    // req.user = decodeToken;
-    // next();
+      .select("-password");
+    req.user = user;
+    next();
   } catch (error) {
     console.log("JWT Error:", error.name, error.message);
     res.status(401).json({ message: "Invalid token." });

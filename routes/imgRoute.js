@@ -6,9 +6,6 @@ const { ImageModel } = require("../models/Image.model");
 const { Album } = require("../models/Album.model");
 const router = express.Router();
 const verifyJWT = require("./middleware");
-// const verifyJWT = require("./middleware/isAuthenticated");
-
-
 const galleryUser = require("../models/User.model");
 
 dotenv.config();
@@ -169,14 +166,14 @@ router.get("/images/favorites", verifyJWT, async (req, res) => {
 
     console.log(favImages, "favImages");
 
-    res.json({ favorites: favImages || [], count: favImages.length || 0});
+    res.json({ favorites: favImages || [], count: favImages.length || 0 });
   } catch (error) {
     console.error("Get favorites error: ", error);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-//api to delete image 
+//api to delete image
 
 router.delete("/images/:imageId", verifyJWT, async (req, res) => {
   try {
