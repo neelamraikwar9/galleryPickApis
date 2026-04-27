@@ -90,15 +90,27 @@ app.post("/auth/login", async (req, res) => {
     console.log(req.body, "Recived");
 
     const user = await galeryUser.findOne({ email });
+    console.log(user, "user"); 
+    console.log(user.password, "password"); 
 
     if (!user) {
       return res
         .status(401)
         .json({ error: "Invalid credentials", success: false });
     }
+
+    if (!user.password) {
+      return res
+        .status(401)
+        .json({
+          error: "This account uses Google login. Please sign in with Google.",
+          success: false,
+        });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      res.status(401).json({ error: "Invalid credentials", success: false });
+      return res.status(401).json({ error: "Invalid credentials", success: false });
     }
 
     // Create JWT
