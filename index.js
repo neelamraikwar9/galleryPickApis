@@ -29,6 +29,12 @@ app.use(express.urlencoded({ extended: true })); // Parses form data
 
 initializeDB();
 
+app.get('/', (req, res) => {
+  res.json({
+    message: "🎉 Welcome to Gallery Pick API",
+  });
+})
+
 app.post("/auth/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
