@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Album } = require("../models/Album.model");
+const { ImageModel } = require("../models/Image.model");
 const verifyJWT = require("./middleware");
 
 router.post("/albums", verifyJWT, async (req, res) => {
@@ -76,6 +77,16 @@ router.get("/albums/shared", verifyJWT, async (req, res) => {
   }
 });
 
+
+//fetching all images of an album; 
+router.get("images/:albumId", verifyJWT, async (req, res) => {
+  try { 
+    const images = await ImageModel.find({ albumId: req.params.albumId });
+    res.status(200).json(images);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch images" });
+  }
+});
 
 
 module.exports = router;
