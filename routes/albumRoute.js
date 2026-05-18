@@ -64,7 +64,7 @@ router.get("/albums/shared", verifyJWT, async (req, res) => {
 
     const sharedAlbums = await Album.find({
       "sharedUsers.email": userEmail, // find albums where this email exists in sharedUsers array
-    });
+    }).populate("ownerId", "name email avatar");
 
     if (!sharedAlbums || sharedAlbums.length === 0) {
       return res.status(200).json([]); // return empty array if no shared albums
