@@ -54,4 +54,28 @@ router.delete("/albums/:albumId", verifyJWT, async (req, res) => {
   }
 });
 
+
+// GET /albums/shared — returns all albums. 
+
+router.get("/shared", authenticate, async (req, res) => {
+  try {
+    const userEmail = req.user.email; // comes from your JWT token (authenticate middleware)
+
+    const sharedAlbums = await Album.find({
+      "sharedUsers.email": userEmail, // find albums where this email exists in sharedUsers array
+    });
+
+    if (!sharedAlbums || sharedAlbums.length === 0) {
+      return res.status(200).json([]); // return empty array if no shared albums
+    }
+
+    res.status(200).json(sharedAlbums);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch shared albums" });
+  }
+});
+
+
+
 module.exports = router;

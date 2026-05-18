@@ -32,9 +32,8 @@ const albumSchema = new mongoose.Schema(
       {
         email: {
           type: String,
-          // required: true,
-          lowercase: true,
           accessLevel: { type: String, enum: ["view", "edit", "admin"] },
+          default: "view",
         },
 
         accessLevel: {
