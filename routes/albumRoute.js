@@ -57,7 +57,7 @@ router.delete("/albums/:albumId", verifyJWT, async (req, res) => {
 
 // GET /albums/shared — returns all albums. 
 
-router.get("/shared", authenticate, async (req, res) => {
+router.get("/albums/shared", authenticate, async (req, res) => {
   try {
     const userEmail = req.user.email; // comes from your JWT token (authenticate middleware)
 
