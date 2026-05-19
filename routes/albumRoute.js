@@ -79,7 +79,7 @@ router.get("/albums/shared", verifyJWT, async (req, res) => {
 
 
 //fetching all images of an album; 
-router.get("images/:albumId", verifyJWT, async (req, res) => {
+router.get("/images/:albumId", verifyJWT, async (req, res) => {
   try { 
     const images = await ImageModel.find({ albumId: req.params.albumId });
     res.status(200).json(images);
