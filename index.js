@@ -27,7 +27,17 @@ dotenv.config();
 app.use(express.urlencoded({ extended: true })); // Parses form data
 // This middleware tells Express: "Parse incoming request bodies that use form data format."
 
-initializeDB();
+// initializeDB();
+
+app.use(async (req, res, next) => {
+  try {
+    await initializeDB();
+    next();
+  } catch (e) {
+    next(e);
+  }
+});
+
 
 app.get('/', (req, res) => {
   res.json({
