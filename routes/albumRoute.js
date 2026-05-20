@@ -55,9 +55,7 @@ router.delete("/albums/:albumId", verifyJWT, async (req, res) => {
   }
 });
 
-
-// GET /albums/shared — returns all albums. 
-
+//returns all albums.
 router.get("/albums/shared", verifyJWT, async (req, res) => {
   try {
     const userEmail = req.user.email; // comes from your JWT token (authenticate middleware)
@@ -77,16 +75,14 @@ router.get("/albums/shared", verifyJWT, async (req, res) => {
   }
 });
 
-
-//fetching all images of an album; 
+//fetching all images of an album;
 router.get("/images/:albumId", verifyJWT, async (req, res) => {
-  try { 
+  try {
     const images = await ImageModel.find({ albumId: req.params.albumId });
     res.status(200).json(images);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch images" });
   }
 });
-
 
 module.exports = router;

@@ -38,12 +38,11 @@ app.use(async (req, res, next) => {
   }
 });
 
-
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.json({
     message: "🎉 Welcome to Gallery Pick API",
   });
-})
+});
 
 app.post("/auth/signup", async (req, res) => {
   try {

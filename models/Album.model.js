@@ -1,5 +1,5 @@
-const mongoose = require("mongoose"); 
-const { v4: uuidv4 } = require("uuid"); 
+const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
 
 const albumSchema = new mongoose.Schema(
   {
@@ -41,11 +41,6 @@ const albumSchema = new mongoose.Schema(
           enum: ["view", "edit", "admin"],
           default: "view",
         },
-
-        // addedAt: {
-        //   type: Date,
-        //   default: Date.now,
-        // },
       },
     ],
   },
@@ -54,8 +49,5 @@ const albumSchema = new mongoose.Schema(
   },
 );
 
-// Index for faster queries
-// albumSchema.index({ ownerId: 1 });
-// albumSchema.index({ 'sharedUsers.email': 1 });
 const Album = mongoose.model("Album", albumSchema);
-module.exports = { Album }; 
+module.exports = { Album };

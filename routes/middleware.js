@@ -5,8 +5,6 @@ const verifyJWTMiddleware = async (req, res, next) => {
   const headers = req.headers;
   const authHeader = headers?.authorization || headers?.Authorization;
 
-  console.log("🔍 Full auth header:", authHeader);
-
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     console.log("No valid Bearer token");
     return res
@@ -16,7 +14,7 @@ const verifyJWTMiddleware = async (req, res, next) => {
 
   try {
     const token = authHeader.split(" ")[1];
-    console.log("Clean token length:", token?.length);
+   
 
     const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
     console.log("Decoded:", decodeToken.email);

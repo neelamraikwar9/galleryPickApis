@@ -95,7 +95,6 @@ router.get("/images", verifyJWT, async (req, res) => {
       .sort({ createdAt: -1 });
     console.log(images, "images");
 
-    console.log(`📸 ${images.length} images for ${req.user.email}`);
     res.status(200).json(images);
   } catch (error) {
     console.error(error);

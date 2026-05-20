@@ -1,6 +1,5 @@
 const passport = require("passport");
 
-// import { Strategy as GoogleStrategy } from ("passport-google-oauth20");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 const galleryUser = require("../models/User.model");
@@ -14,11 +13,11 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Check if user already exists
+        // Checking if user already exists
         let user = await galleryUser.findOne({ googleId: profile.id });
 
         if (!user) {
-          // Also check by email (user may have signed up manually before)
+          // Also checking by email. user may have signed up manually before
           user = await galleryUser.findOne({ email: profile.emails[0].value });
 
           if (user) {

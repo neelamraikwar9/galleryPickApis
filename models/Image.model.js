@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const ImageSchema = new mongoose.Schema(
   {
     imgUrl: { type: String, required: true },
-    
+
     imageId: {
       type: String,
       required: true,
