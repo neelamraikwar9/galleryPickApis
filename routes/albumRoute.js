@@ -26,7 +26,10 @@ router.post("/albums", verifyJWT, async (req, res) => {
 
 router.get("/albums", verifyJWT, async (req, res) => {
   try {
-    const albums = await Album.find({ ownerId: req.user._id });
+    const albums = await Album.find({ ownerId: req.user._id }).populate(
+      "ownerId",
+      "name email avatar",
+    );
     console.log(albums, "albums");
     res.status(200).json(albums);
   } catch (error) {
