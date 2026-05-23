@@ -88,4 +88,35 @@ router.get("/images/:albumId", verifyJWT, async (req, res) => {
   }
 });
 
+
+// Add user to albums; 
+router.patch("/albums/:albumId/share", verifyJWT, async (req, res) => {
+  try {
+    const { email, accessLevel } = req.body;
+    const album = await Album.findById(req.params.albumId);
+    if (!album) return res.status(404).json({ message: "Album not found" });
+    const exists = album.sharedUsers.find((u) => u.email === email);
+    if (exists) return res.status(400).json({ message: "User already added" });
+    album.sharedUsers.push({ email, accessLevel });
+    await album.save();
+    res.status(200).json(album);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to share album" });
+  }
+});
+
+// Remove user from album
+router.patch("/albums/:albumId/unshare", verifyJWT, async (req, res) => {
+  try {
+    const { email } = req.body;
+    const album = await Album.findById(req.params.albumId);
+    if (!album) return res.status(404).json({ message: "Album not found" });
+    album.sharedUsers = album.sharedUsers.filter(u => u.email !== email);
+    await album.save();
+    res.status(200).json(album);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to remove user" });
+  }
+});
+
 module.exports = router;
