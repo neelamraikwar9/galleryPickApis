@@ -61,10 +61,10 @@ router.delete("/albums/:albumId", verifyJWT, async (req, res) => {
 //returns all albums.
 router.get("/albums/shared", verifyJWT, async (req, res) => {
   try {
-    const userEmail = req.user.email; // comes from your JWT token (authenticate middleware)
+    const userEmail = req.user.email; 
 
     const sharedAlbums = await Album.find({
-      "sharedUsers.email": userEmail, // find albums where this email exists in sharedUsers array
+      "sharedUsers.email": userEmail, 
     }).populate("ownerId", "name email avatar");
 
     if (!sharedAlbums || sharedAlbums.length === 0) {
