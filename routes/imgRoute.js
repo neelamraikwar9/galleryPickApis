@@ -195,7 +195,7 @@ router.delete("/images/:imageId", verifyJWT, async (req, res) => {
 
 
 //api to edit an Image; 
-router.put("images/:id", verifyJWT, async(req, res) => {
+router.put("/images/:id", verifyJWT, async(req, res) => {
   const { id } = req.params
   const { name, tags, person } = req.body; 
 
@@ -205,8 +205,8 @@ router.put("images/:id", verifyJWT, async(req, res) => {
       { name, tags, person },
       { new: true, runValidators: true }     
 )
-
-if (!updatedImages) {
+// console.log(updatedImages, "updatedImages");
+if (!updatedImage) {
   return res.status(404).json({ message: "Image not found" });
 }
 
