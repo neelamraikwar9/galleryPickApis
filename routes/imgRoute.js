@@ -216,8 +216,30 @@ if (!updatedImage) {
 
 } catch(error){
 console.error(error);
+ console.error("Full error:", error.response?.data);  // ← a
 res.status(500).json({ message: "Server error" });
   }
 })
+
+
+//api to add comments; 
+router.post("/images/:id/comments", verifyJWT, async (req, res) => {
+  const { id } = req.params;
+  const { text } = req.body;
+
+  try {
+    const image = await ImageModel.findByIdAndUpdate(
+      id,
+      { $push: { comments: { text } } },
+      { new: true },
+    );
+
+    if (!image) return res.status(404).json({ message: "Image not found" });
+
+    res.status(200).json({ message: "Comment added", image });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;
