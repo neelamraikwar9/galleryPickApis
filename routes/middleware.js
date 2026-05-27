@@ -14,7 +14,6 @@ const verifyJWTMiddleware = async (req, res, next) => {
 
   try {
     const token = authHeader.split(" ")[1];
-   
 
     const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
     console.log("Decoded:", decodeToken.email);

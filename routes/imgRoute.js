@@ -193,36 +193,33 @@ router.delete("/images/:imageId", verifyJWT, async (req, res) => {
   }
 });
 
+//api to edit an Image;
+router.put("/images/:id", verifyJWT, async (req, res) => {
+  const { id } = req.params;
+  const { name, tags, person } = req.body;
 
-//api to edit an Image; 
-router.put("/images/:id", verifyJWT, async(req, res) => {
-  const { id } = req.params
-  const { name, tags, person } = req.body; 
-
-  try{
-     const updatedImage = await ImageModel.findByIdAndUpdate(
+  try {
+    const updatedImage = await ImageModel.findByIdAndUpdate(
       id,
       { name, tags, person },
-      { new: true, runValidators: true }     
-)
-// console.log(updatedImages, "updatedImages");
-if (!updatedImage) {
-  return res.status(404).json({ message: "Image not found" });
-}
+      { new: true, runValidators: true },
+    );
+    // console.log(updatedImages, "updatedImages");
+    if (!updatedImage) {
+      return res.status(404).json({ message: "Image not found" });
+    }
 
- res
-   .status(200)
-   .json({ message: "Image updated successfully", image: updatedImage });
-
-} catch(error){
-console.error(error);
- console.error("Full error:", error.response?.data);  // ← a
-res.status(500).json({ message: "Server error" });
+    res
+      .status(200)
+      .json({ message: "Image updated successfully", image: updatedImage });
+  } catch (error) {
+    console.error(error);
+    console.error("Full error:", error.response?.data); // ← a
+    res.status(500).json({ message: "Server error" });
   }
-})
+});
 
-
-//api to add comments; 
+//api to add comments;
 router.post("/images/:id/comments", verifyJWT, async (req, res) => {
   const { id } = req.params;
   const { text } = req.body;
